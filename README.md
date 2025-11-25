@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Campus job links
 
-## Getting Started
+Next.js 16 (App Router + Turbopack) app for curating latest job links with shareable slugs and a private `/leela` dashboard for publishing/deleting posts.
 
-First, run the development server:
+### Local setup
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Configure environment variables by creating `.env.local`
+
+```
+MONGODB_URI="your-mongodb-atlas-connection-string"
+MONGODB_DB="job-links"
+MONGODB_COLLECTION="jobs"
+LEELA_PASSWORD="set-a-strong-passcode"
+```
+
+3. Run dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### MongoDB Atlas expectations
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- The app creates (or reuses) the collection defined by `MONGODB_COLLECTION` and stores every job document with slug uniqueness enforced via an index.
+- Deployments on Vercel require the same environment variables set in the dashboard (Project Settings → Environment Variables). Atlas must allow connections from Vercel’s IPs or use the “0.0.0.0/0” rule plus credentials.
+- Because persistence lives in MongoDB, the old `data/jobs.json` file is no longer the source of truth; it can be used for manual imports/exports but is not read by the app.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Admin usage
 
-## Learn More
+- Visit `/leela`, enter the passcode (`LEELA_PASSWORD`), and you’ll see the dashboard to add or delete job links.
+- Each job can be reached at `/{slug}` (e.g., `/infosys-analyst`). The home page automatically lists the latest entries.
 
-To learn more about Next.js, take a look at the following resources:
+### Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Works on Vercel, Netlify, or any Node hosting that supports Next.js 16.
+- Remember to set `LEELA_PASSWORD` to a strong secret in production and restrict MongoDB user permissions to the specific database.
