@@ -1,10 +1,6 @@
 import crypto from "crypto";
-import {
-  MongoClient,
-  type Collection,
-  type ModifyResult,
-  type WithId,
-} from "mongodb";
+import { MongoClient } from "mongodb";
+import type { Collection, WithId } from "mongodb";
 
 export type Job = {
   id: string;
@@ -87,12 +83,13 @@ export async function addJob(
 
 export async function deleteJob(slug: string): Promise<Job> {
   const collection = await getCollection();
-  const result: ModifyResult<Job> = await collection.findOneAndDelete({ slug });
+  const job = await collection.findOne({ slug });
 
-  if (!result?.value) {
+  if (!job) {
     throw new Error(`Job with slug "${slug}" not found.`);
   }
 
-  return stripMongoId(result.value);
+  await collection.deleteOne({ slug });
+  return stripMongoId(job);
 }
 
