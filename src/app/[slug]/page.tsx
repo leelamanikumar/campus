@@ -39,6 +39,38 @@ export default async function JobPage({ params }: Props) {
           </h1>
           <p className="mt-1 text-sm text-zinc-500">{job.location}</p>
           <p className="mt-6 text-base text-zinc-700">{job.summary}</p>
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-zinc-100">
+            <table className="min-w-full table-auto text-sm">
+              <tbody>
+                {[
+                  { label: "Role", value: job.title },
+                  { label: "Company", value: job.company },
+                  { label: "Batch", value: job.batch ?? "Not specified" },
+                  {
+                    label: "Eligibility Criteria",
+                    value: job.eligibility ?? "Refer to official link",
+                  },
+                  { label: "CTC", value: job.ctc ?? "Not disclosed" },
+                  {
+                    label: "Other Details",
+                    value: job.otherDetails ?? "Please review the job post",
+                  },
+                ].map((item) => (
+                  <tr
+                    key={item.label}
+                    className="border-b border-zinc-100 last:border-b-0"
+                  >
+                    <th className="w-36 bg-zinc-50 px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500 sm:w-1/3 sm:text-xs">
+                      {item.label}
+                    </th>
+                    <td className="px-4 py-3 text-sm text-zinc-800 sm:text-base">
+                      {item.value}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           <div className="mt-6 flex flex-wrap gap-2">
             {job.tags.map((tag) => (
               <span

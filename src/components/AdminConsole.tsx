@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import type { Job } from "@/lib/jobStore";
+
 type JobPayload = {
   title: string;
   company: string;
@@ -10,15 +12,13 @@ type JobPayload = {
   summary: string;
   tags: string;
   slug: string;
+  batch: string;
+  eligibility: string;
+  ctc: string;
+  otherDetails: string;
 };
 
-type JobListItem = {
-  id: string;
-  title: string;
-  company: string;
-  slug: string;
-  postedAt: string;
-};
+type JobListItem = Job;
 
 type Props = {
   onLogout?: () => void;
@@ -32,6 +32,10 @@ const initialState: JobPayload = {
   summary: "",
   tags: "",
   slug: "",
+  batch: "",
+  eligibility: "",
+  ctc: "",
+  otherDetails: "",
 };
 
 export function AdminConsole({ onLogout }: Props) {
@@ -44,7 +48,7 @@ export function AdminConsole({ onLogout }: Props) {
   useEffect(() => {
     (async () => {
       const res = await fetch("/api/jobs");
-      const data = await res.json();
+      const data = (await res.json()) as { jobs?: JobListItem[] };
       setJobs(data.jobs ?? []);
     })();
   }, []);
@@ -71,6 +75,10 @@ export function AdminConsole({ onLogout }: Props) {
           .map((tag) => tag.trim())
           .filter(Boolean),
         slug: form.slug,
+        batch: form.batch.trim() || undefined,
+        eligibility: form.eligibility.trim() || undefined,
+        ctc: form.ctc.trim() || undefined,
+        otherDetails: form.otherDetails.trim() || undefined,
       };
 
       const response = await fetch("/api/jobs", {
@@ -79,7 +87,7 @@ export function AdminConsole({ onLogout }: Props) {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as JobListItem;
 
       if (!response.ok) {
         throw new Error(data.error ?? "Unable to save job.");
@@ -199,6 +207,59 @@ export function AdminConsole({ onLogout }: Props) {
               />
             </label>
 
+            <div className="grid gap-5 md:grid-cols-2">
+              {(
+                [
+                  {
+                    label: "Target batch",
+                    name: "batch",
+                    placeholder: "e.g., 2024/2025",
+                  },
+                  {
+                    label: "Eligibility criteria",
+                    name: "eligibility",
+                    placeholder: "B.E / B.Tech with 7 CGPA",
+                  },
+                  { label: "CTC / stipend", name: "ctc", placeholder: "₹6-8 LPA" },
+                ] satisfies Array<{
+                  label: string;
+                  name: "batch" | "eligibility" | "ctc";
+                  placeholder: string;
+                }>
+              ).map((field) => (
+                <label key={field.name} className="block text-sm font-medium">
+                  {field.label}
+                  <input
+                    type="text"
+                    name={field.name}
+                    value={form[field.name]}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        [field.name]: event.target.value,
+                      }))
+                    }
+                    className="mt-2 w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-base text-white placeholder-white/40 focus:border-lime-300 focus:outline-none"
+                    placeholder={field.placeholder}
+                  />
+                </label>
+              ))}
+            </div>
+
+            <label className="block text-sm font-medium">
+              Other details / notes
+              <textarea
+                name="otherDetails"
+                rows={3}
+                value={form.otherDetails}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, otherDetails: event.target.value }))
+                }
+                className="mt-2 w-full rounded-2xl border border-white/20 bg-white/5 px-4 py-3 text-base text-white placeholder-white/40 focus:border-lime-300 focus:outline-none"
+                placeholder="Interview rounds, deadlines, documents to carry..."
+              />
+            </label>
+
             <label className="block text-sm font-medium">
               Tags (comma separated)
               <input
@@ -262,23 +323,55 @@ export function AdminConsole({ onLogout }: Props) {
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="flex items-center justify-between gap-4 rounded-2xl border border-slate-100 p-4 text-sm"
+                className="space-y-3 rounded-2xl border border-slate-100 p-4 text-sm"
               >
-                <div>
-                  <p className="font-semibold text-slate-900">{job.title}</p>
-                  <p className="text-slate-500">{job.company}</p>
-                  <p className="text-xs text-slate-400">
-                    {new Date(job.postedAt).toLocaleString()} • /{job.slug}
-                  </p>
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="font-semibold text-slate-900">{job.title}</p>
+                    <p className="text-slate-500">{job.company}</p>
+                    <p className="text-xs text-slate-400">
+                      {new Date(job.postedAt).toLocaleString()} • /{job.slug}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(job.slug)}
+                    disabled={Boolean(deleteState[job.slug])}
+                    className="self-start rounded-full border border-red-200 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-500 transition hover:bg-red-50 disabled:opacity-60"
+                  >
+                    {deleteState[job.slug] ? "Deleting..." : "Delete"}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(job.slug)}
-                  disabled={Boolean(deleteState[job.slug])}
-                  className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-500 transition hover:bg-red-50 disabled:opacity-60"
-                >
-                  {deleteState[job.slug] ? "Deleting..." : "Delete"}
-                </button>
+                <div className="overflow-x-auto rounded-xl border border-slate-100">
+                  <table className="min-w-full table-auto text-xs">
+                    <tbody>
+                      {[
+                        { label: "Role", value: job.title },
+                        { label: "Company", value: job.company },
+                        { label: "Batch", value: job.batch ?? "Not specified" },
+                        {
+                          label: "Eligibility Criteria",
+                          value: job.eligibility ?? "Refer to official link",
+                        },
+                        { label: "CTC", value: job.ctc ?? "Not disclosed" },
+                        {
+                          label: "Other Details",
+                          value: job.otherDetails ?? "Review job post",
+                        },
+                      ].map((item) => (
+                        <tr
+                          key={item.label}
+                          className="border-b border-slate-100 text-[11px] last:border-b-0 sm:text-xs"
+                        >
+                          <th className="w-32 bg-slate-50 px-3 py-2 text-left font-semibold uppercase tracking-wide text-slate-500 sm:w-1/3">
+                            {item.label}
+                          </th>
+                          <td className="px-3 py-2 text-slate-800">{item.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             ))}
             {jobs.length === 0 && (

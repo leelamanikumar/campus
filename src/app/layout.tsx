@@ -36,7 +36,7 @@ export default function RootLayout({
                 href="/"
                 className="text-lg font-semibold tracking-wide text-lime-300"
               >
-                Campus Radar
+                Offcampus jobs
               </Link>
               <Link
                 href="/"

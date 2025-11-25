@@ -16,6 +16,10 @@ export async function POST(request: Request) {
     summary?: string;
     tags?: string[];
     slug?: string;
+    batch?: string;
+    eligibility?: string;
+    ctc?: string;
+    otherDetails?: string;
   };
 
   if (
@@ -39,6 +43,10 @@ export async function POST(request: Request) {
       summary: payload.summary?.trim() ?? "New job update",
       tags: payload.tags ?? [],
       slug: payload.slug.trim().toLowerCase(),
+      batch: payload.batch?.trim(),
+      eligibility: payload.eligibility?.trim(),
+      ctc: payload.ctc?.trim(),
+      otherDetails: payload.otherDetails?.trim(),
     });
 
     return NextResponse.json(job, { status: 201 });

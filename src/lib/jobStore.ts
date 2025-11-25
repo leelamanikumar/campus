@@ -12,6 +12,10 @@ export type Job = {
   summary: string;
   tags: string[];
   postedAt: string;
+  batch?: string;
+  eligibility?: string;
+  ctc?: string;
+  otherDetails?: string;
 };
 
 const uri = process.env.MONGODB_URI;
