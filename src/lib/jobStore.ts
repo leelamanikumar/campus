@@ -86,12 +86,12 @@ export async function addJob(
 
 export async function deleteJob(slug: string): Promise<Job> {
   const collection = await getCollection();
-  const job = await collection.findOneAndDelete({ slug });
+  const result = await collection.findOneAndDelete({ slug });
 
-  if (!job.value) {
+  if (!result?.value) {
     throw new Error(`Job with slug "${slug}" not found.`);
   }
 
-  return stripMongoId(job.value);
+  return stripMongoId(result.value);
 }
 
