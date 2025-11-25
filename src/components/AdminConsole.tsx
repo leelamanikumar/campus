@@ -87,7 +87,9 @@ export function AdminConsole({ onLogout }: Props) {
         body: JSON.stringify(payload),
       });
 
-      const data = (await response.json()) as JobListItem;
+      const data = (await response.json()) as JobListItem & {
+        error?: string;
+      };
 
       if (!response.ok) {
         throw new Error(data.error ?? "Unable to save job.");
