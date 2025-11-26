@@ -81,7 +81,7 @@ export default async function JobPage({ params }: Props) {
               </span>
             ))}
           </div>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-8">
             <Link
               href={job.externalUrl}
               target="_blank"
@@ -89,12 +89,6 @@ export default async function JobPage({ params }: Props) {
             >
               Visit official job link
             </Link>
-            <div className="rounded-full border border-zinc-200 px-4 py-3 text-sm text-zinc-500">
-              Share link:{" "}
-              <span className="font-medium text-zinc-900">
-                {`/${job.slug}`}
-              </span>
-            </div>
           </div>
         </section>
 

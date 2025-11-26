@@ -15,10 +15,9 @@ export default async function Home() {
             Latest job updates in one place
           </h1>
           <p className="mt-2 max-w-2xl text-lg text-zinc-600">
-            Track daily hiring notifications from Infosys, TCS, Wipro and more.
-            Each link opens with a dedicated page you can share like{" "}
+          Find fresh hiring updates from TCS, Infosys, Wipro, Accenture & top MNCs. <br />
             <span className="font-semibold text-zinc-900">
-              yoursite.com/infosys-software-engineer
+            You can explore job updates, interview experiences, and curated interview materials — all in one place.
             </span>
             .
           </p>
@@ -30,7 +29,7 @@ export default async function Home() {
               Recently uploaded links
             </h2>
             <p className="text-sm text-zinc-500">
-              {jobs.length} job{jobs.length === 1 ? "" : "s"} listed
+              {jobs.length} job{jobs.length === 1 ? "" : "s"} total
             </p>
           </div>
 

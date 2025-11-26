@@ -11,7 +11,11 @@ export function JobCard({ job }: Props) {
     <article className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white/70 px-4 py-3 text-sm shadow-sm">
       <div className="flex flex-col">
         <p className="text-[11px] uppercase tracking-[0.3em] text-indigo-400">
-          {new Date(job.postedAt).toLocaleDateString()}
+          {new Date(job.postedAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+          })}
         </p>
         <span className="text-base font-semibold text-zinc-900">
           {job.title}
@@ -20,7 +24,7 @@ export function JobCard({ job }: Props) {
       </div>
       <Link
         href={`/${job.slug}`}
-        className="rounded-full border border-indigo-500 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-indigo-600 transition hover:bg-indigo-50"
+        className="rounded-full border border-indigo-500 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-indigo-600 transition hover:border-blue-500 hover:bg-blue-500 hover:text-white"
       >
         Click link
       </Link>
