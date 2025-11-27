@@ -55,7 +55,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-semibold text-zinc-900">WhatsApp Group</h3>
                 <a
-                  href="https://wa.me/yourwhatsappnumber"
+                  href="https://whatsapp.com/channel/0029Vb7HEkhBvvsausUaa73h"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-indigo-600 hover:underline"
@@ -103,7 +103,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-semibold text-zinc-900">Telegram Channel</h3>
                 <a
-                  href="https://t.me/yourchannel"
+                  href="https://t.me/+QQCFfkYg4KcyYWY1"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-indigo-600 hover:underline"

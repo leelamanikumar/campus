@@ -105,7 +105,7 @@ export default function RootLayout({
                   </svg>
                 </a>
                 <a
-                  href="https://wa.me/yourwhatsappnumber"
+                  href="https://whatsapp.com/channel/0029Vb7HEkhBvvsausUaa73h"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition hover:opacity-80"
@@ -137,7 +137,7 @@ export default function RootLayout({
                   </svg>
                 </a>
                 <a
-                  href="https://t.me/yourchannel"
+                  href="https://t.me/+QQCFfkYg4KcyYWY1"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition hover:opacity-80"

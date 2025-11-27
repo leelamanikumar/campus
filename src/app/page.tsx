@@ -21,7 +21,7 @@ export default async function Home() {
           <p className="mt-2 max-w-2xl text-lg text-zinc-600">
           Find fresh hiring updates from TCS, Infosys, Wipro, Accenture & top MNCs. <br />
             <span className="font-semibold text-zinc-900">
-            You can explore job updates, interview experiences, and curated interview materials — all in one place.
+            You can explore job updates, interview experiences, and curated interview materials all in one place
             </span>
             .
           </p>
