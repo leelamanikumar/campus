@@ -58,11 +58,33 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
 
           <footer id="contact" className="border-t border-white/10 bg-slate-950/90 px-6 py-6 text-sm text-slate-200 scroll-mt-4">
-            <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <p>
-                © {new Date().getFullYear()} Leela Mani Kumar. Sharing campus job
-                updates daily.
-              </p>
+            <div className="mx-auto flex w-full max-w-6xl flex-col gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <p>
+                  © {new Date().getFullYear()} Offcampus jobs. Sharing campus job
+                  updates daily.
+                </p>
+                <div className="flex flex-wrap items-center gap-4">
+                  <Link
+                    href="/about"
+                    className="text-xs text-slate-400 transition hover:text-lime-300 hover:underline"
+                  >
+                    About
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="text-xs text-slate-400 transition hover:text-lime-300 hover:underline"
+                  >
+                    Contact
+                  </Link>
+                  <Link
+                    href="/privacy-policy"
+                    className="text-xs text-slate-400 transition hover:text-lime-300 hover:underline"
+                  >
+                    Privacy Policy
+                  </Link>
+                </div>
+              </div>
               <div className="flex items-center gap-4">
                 <span className="text-xs text-slate-400">Connect:</span>
                 <a
