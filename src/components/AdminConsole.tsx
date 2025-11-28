@@ -40,9 +40,11 @@ const initialState: JobPayload = {
 };
 
 type ResourceMaterialPayload = {
+  id?: string;
   title: string;
   url: string;
   type?: string;
+  description?: string;
 };
 
 type ResourcePayload = {
