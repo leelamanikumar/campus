@@ -79,6 +79,9 @@ export function AdminConsole({ onLogout }: Props) {
   const [resourceDeleteState, setResourceDeleteState] = useState<
     Record<string, boolean>
   >({});
+  const [editingResourceSlug, setEditingResourceSlug] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     (async () => {
@@ -219,6 +222,34 @@ export function AdminConsole({ onLogout }: Props) {
     });
   }
 
+  function handleResourceEdit(resource: Resource) {
+    setEditingResourceSlug(resource.slug);
+    setResourceForm({
+      title: resource.title,
+      summary: resource.summary,
+      description: resource.description || "",
+      tags: resource.tags.join(", "),
+      slug: resource.slug,
+      materials: resource.materials.map((m) => ({
+        id: m.id,
+        title: m.title,
+        url: m.url,
+        type: m.type || "",
+        description: m.description || "",
+      })),
+    });
+    // Scroll to form
+    document
+      .getElementById("resource-form")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function handleResourceCancel() {
+    setEditingResourceSlug(null);
+    setResourceForm(initialResourceState);
+    setResourceMessage(null);
+  }
+
   async function handleResourceSubmit(
     event: React.FormEvent<HTMLFormElement>,
   ) {
@@ -228,9 +259,11 @@ export function AdminConsole({ onLogout }: Props) {
 
     const materials = resourceForm.materials
       .map((item) => ({
+        id: item.id,
         title: item.title.trim(),
         url: item.url.trim(),
         type: item.type?.trim() || undefined,
+        description: item.description?.trim() || undefined,
       }))
       .filter((item) => item.title && item.url);
 
@@ -257,10 +290,11 @@ export function AdminConsole({ onLogout }: Props) {
         throw new Error("Title, summary, and slug are required.");
       }
 
+      const isEditing = editingResourceSlug !== null;
       const response = await fetch("/api/resources", {
-        method: "POST",
+        method: isEditing ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(isEditing ? { ...payload, slug: editingResourceSlug } : payload),
       });
 
       const data = (await response.json()) as Resource & { error?: string };
@@ -269,9 +303,18 @@ export function AdminConsole({ onLogout }: Props) {
         throw new Error(data.error ?? "Unable to save resource.");
       }
 
-      setResources((prev) => [data, ...prev]);
+      if (isEditing) {
+        setResources((prev) =>
+          prev.map((r) => (r.slug === editingResourceSlug ? data : r)),
+        );
+        setResourceMessage("Resource updated ✅");
+      } else {
+        setResources((prev) => [data, ...prev]);
+        setResourceMessage("Resource published ✅");
+      }
+
       setResourceForm(initialResourceState);
-      setResourceMessage("Resource published ✅");
+      setEditingResourceSlug(null);
     } catch (error) {
       setResourceMessage(
         error instanceof Error ? error.message : "Failed to save resource",
@@ -509,7 +552,7 @@ export function AdminConsole({ onLogout }: Props) {
                   Resources
                 </p>
                 <h2 className="mt-3 text-3xl font-semibold text-white">
-                  Share interview kits
+                  {editingResourceSlug ? "Edit resource" : "Share interview kits"}
                 </h2>
               </div>
             </div>
@@ -517,7 +560,7 @@ export function AdminConsole({ onLogout }: Props) {
               Upload prep guides, experience writeups, or curated material links.
             </p>
 
-            <form onSubmit={handleResourceSubmit} className="mt-8 space-y-5">
+            <form id="resource-form" onSubmit={handleResourceSubmit} className="mt-8 space-y-5">
               <label className="block text-sm font-medium">
                 Resource title
                 <input
@@ -586,18 +629,20 @@ export function AdminConsole({ onLogout }: Props) {
                     type="text"
                     value={resourceForm.slug}
                     required
+                    disabled={editingResourceSlug !== null}
                     onChange={(event) =>
                       setResourceForm((prev) => ({
                         ...prev,
                         slug: event.target.value.toLowerCase().replace(/\s+/g, "-"),
                       }))
                     }
-                    className="flex-1 rounded-r-2xl bg-transparent px-4 py-3 focus:outline-none"
+                    className="flex-1 rounded-r-2xl bg-transparent px-4 py-3 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="tcs-nqt-2025"
                   />
                 </div>
                 <p className="mt-1 text-xs text-white/50">
                   Preview: {resourceUrlPreview}
+                  {editingResourceSlug && " (slug cannot be changed when editing)"}
                 </p>
               </label>
 
@@ -656,13 +701,31 @@ export function AdminConsole({ onLogout }: Props) {
                 </button>
               </div>
 
-              <button
-                type="submit"
-                disabled={resourceLoading}
-                className="w-full rounded-2xl bg-sky-300 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-sky-200 disabled:opacity-60"
-              >
-                {resourceLoading ? "Publishing..." : "Publish resource"}
-              </button>
+              <div className="flex gap-3">
+                {editingResourceSlug && (
+                  <button
+                    type="button"
+                    onClick={handleResourceCancel}
+                    disabled={resourceLoading}
+                    className="flex-1 rounded-2xl border border-white/30 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10 disabled:opacity-60"
+                  >
+                    Cancel
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  disabled={resourceLoading}
+                  className="flex-1 rounded-2xl bg-sky-300 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-sky-200 disabled:opacity-60"
+                >
+                  {resourceLoading
+                    ? editingResourceSlug
+                      ? "Updating..."
+                      : "Publishing..."
+                    : editingResourceSlug
+                      ? "Update resource"
+                      : "Publish resource"}
+                </button>
+              </div>
 
               {resourceMessage && (
                 <p className="text-sm text-sky-100" role="status">
@@ -762,14 +825,24 @@ export function AdminConsole({ onLogout }: Props) {
                         resources/{resource.slug}
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => handleResourceDelete(resource.slug)}
-                      disabled={Boolean(resourceDeleteState[resource.slug])}
-                      className="self-start rounded-full border border-red-200 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-500 transition hover:bg-red-50 disabled:opacity-60"
-                    >
-                      {resourceDeleteState[resource.slug] ? "Deleting..." : "Delete"}
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleResourceEdit(resource)}
+                        disabled={Boolean(resourceDeleteState[resource.slug])}
+                        className="self-start rounded-full border border-blue-200 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-blue-600 transition hover:bg-blue-50 disabled:opacity-60"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleResourceDelete(resource.slug)}
+                        disabled={Boolean(resourceDeleteState[resource.slug])}
+                        className="self-start rounded-full border border-red-200 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-500 transition hover:bg-red-50 disabled:opacity-60"
+                      >
+                        {resourceDeleteState[resource.slug] ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
                   </div>
                   <div className="rounded-xl border border-slate-100 p-3 text-xs text-slate-600">
                     <p className="font-semibold text-slate-900">Materials</p>

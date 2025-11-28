@@ -101,6 +101,32 @@ export async function addResource(
   return resource;
 }
 
+export async function updateResource(
+  slug: string,
+  data: Partial<Omit<Resource, "id" | "slug" | "createdAt">> & {
+    updatedAt?: string;
+  },
+): Promise<Resource> {
+  const collection = await getCollection();
+  const resource = await collection.findOne({ slug });
+
+  if (!resource) {
+    throw new Error(`Resource with slug "${slug}" not found.`);
+  }
+
+  const updateData: Partial<Resource> = {
+    ...data,
+    updatedAt: data.updatedAt ?? new Date().toISOString(),
+  };
+
+  await collection.updateOne({ slug }, { $set: updateData });
+  const updated = await collection.findOne({ slug });
+  if (!updated) {
+    throw new Error(`Resource with slug "${slug}" not found after update.`);
+  }
+  return stripMongoId(updated);
+}
+
 export async function deleteResource(slug: string): Promise<Resource> {
   const collection = await getCollection();
   const resource = await collection.findOne({ slug });
