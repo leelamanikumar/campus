@@ -4,6 +4,8 @@ import { JobList } from "@/components/JobList";
 import { getJobs } from "@/lib/jobStore";
 import { getResources } from "@/lib/resourceStore";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const [jobs, resources] = await Promise.all([getJobs(), getResources()]);
   const featuredResources = resources.slice(0, 4);

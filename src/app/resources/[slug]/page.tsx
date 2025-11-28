@@ -3,18 +3,14 @@ import { notFound } from "next/navigation";
 
 import {
   getResourceBySlug,
-  getResources,
   type Resource,
 } from "@/lib/resourceStore";
+
+export const dynamic = 'force-dynamic';
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  const resources = await getResources();
-  return resources.map((resource) => ({ slug: resource.slug }));
-}
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
@@ -116,6 +112,7 @@ export default async function ResourcePage({ params }: Props) {
     </div>
   );
 }
+
 
 
 
