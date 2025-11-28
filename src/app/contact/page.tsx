@@ -33,10 +33,10 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-semibold text-zinc-900">Email</h3>
                 <a
-                  href="mailto:leelamanikumar@email.com"
+                  href="mailto:yleela191@gmail.com"
                   className="text-indigo-600 hover:underline"
                 >
-                  leelamanikumar@email.com
+                  yleela191@gmail.com
                 </a>
               </div>
             </div>
@@ -79,7 +79,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-semibold text-zinc-900">Instagram Page</h3>
                 <a
-                  href="https://instagram.com/yourusername"
+                  href="https://www.instagram.com/offcampus_jobs4u?igsh=eWN0b253NDRkcHJi"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-indigo-600 hover:underline"
@@ -103,7 +103,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="font-semibold text-zinc-900">Telegram Channel</h3>
                 <a
-                  href="https://t.me/+QQCFfkYg4KcyYWY1"
+                  href="https://t.me/offcampusjobs4you"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-indigo-600 hover:underline"

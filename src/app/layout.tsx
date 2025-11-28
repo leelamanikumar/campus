@@ -88,7 +88,7 @@ export default function RootLayout({
               <div className="flex items-center gap-4">
                 <span className="text-xs text-slate-400">Connect:</span>
                 <a
-                  href="mailto:leelamanikumar@email.com"
+                  href="mailto:yleela191@gmail.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition hover:opacity-80"
@@ -121,7 +121,7 @@ export default function RootLayout({
                   </svg>
                 </a>
                 <a
-                  href="https://instagram.com/yourusername"
+                  href="https://www.instagram.com/offcampus_jobs4u?igsh=eWN0b253NDRkcHJi"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition hover:opacity-80"
@@ -137,7 +137,7 @@ export default function RootLayout({
                   </svg>
                 </a>
                 <a
-                  href="https://t.me/+QQCFfkYg4KcyYWY1"
+                  href="https://t.me/offcampusjobs4you"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="transition hover:opacity-80"
